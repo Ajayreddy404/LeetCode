@@ -1,15 +1,31 @@
 class Solution {
 public:
+    
+    int N;
+    int dp[50];
+    
+    int rec(int level){
+        // base case and pruning
+        if(level > N){
+            return 0;
+        }
+        if(level==N){
+            return 1;
+        }
+        
+        // cache check
+        if(dp[level]!=-1)   return dp[level];
+        
+        // transit and calc
+        int ans = rec(level+1) + rec(level+2);
+        
+        // save and return
+        return dp[level] = ans;
+    }
+    
     int climbStairs(int n) {
-        int num1 = 1, num2 = 2;
-        if(n==1){
-            return num1;
-        }
-        for(int i=3; i<=n; i++){
-            int temp = num1 + num2;
-            num1 = num2;
-            num2 = temp;
-        }
-        return num2;
+        N = n;
+        memset(dp,-1,sizeof(dp));
+        return rec(0);
     }
 };
