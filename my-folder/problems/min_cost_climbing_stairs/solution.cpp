@@ -1,26 +1,33 @@
-/*void solve(int &n, vector<int> &dp, vector<int> &cost, int i){
-    if(i==0)
-        return;
-    else if(i==1){
-        dp[i] = dp[i-1]
-    }
-}*/
-
-
 class Solution {
 public:
-    int minCostClimbingStairs(vector<int>& cost) {
-        int n = cost.size();
-        //cost.push_back(0);
-        //vector<int> dp(n+1,1e8);
-        int first = cost[0], second = cost[1],temp;
-        
-        for(int i=2; i<n; i++){
-            temp = min(first,second)+cost[i];
-            first = second;
-            second = temp;
+    int n;
+    // vector<int> arr;
+    int dp[1010];
+    
+    int rec(int level, vector<int>& cost){
+        // base case and pruning
+        if(level > n){
+            return 1e9;
         }
-        
-        return min(first,second);
+        if(level==n){
+            return 0;
+        }
+
+        // cache check
+        if(dp[level]!=-1)   return dp[level];
+
+        // transit and calc
+        int ans = min(rec(level+1, cost),rec(level+2, cost)) + cost[level];
+        // cout<<level<<" "<<ans<<endl;
+
+        // save and return
+        return dp[level] = ans;
+    }
+
+    int minCostClimbingStairs(vector<int>& cost) {
+        // arr = cost;
+        n = cost.size();
+        memset(dp,-1,sizeof(dp));
+        return min(rec(0,cost),rec(1,cost));
     }
 };
