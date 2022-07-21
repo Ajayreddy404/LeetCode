@@ -1,29 +1,27 @@
 class Solution {
 public:
+    int n;
+    // int arr;
+    int dp[101];
+    
+    int rec(int level, vector<int>& arr){
+        if(level>=n){
+            return 0;
+        }
+        
+        if(dp[level]!=-1){
+            return dp[level];
+        }
+        
+        int ans = max(rec(level+2, arr), rec(level+3, arr)) + arr[level];
+        
+        return dp[level] = ans;
+    }
+    
     int rob(vector<int>& nums) {
-        int n = nums.size();
-        //nums.push_back(0);
-        //vector<int> dp(n);
-        if(n==1){
-            return nums[0];
-        }
-        else if(n==2){
-            return max(nums[0],nums[1]);
-        }
-        else if(n==3){
-            return max(nums[0]+nums[2],nums[1]);
-        }
-        
-        int first = nums[0], second = nums[1], curr = nums[0]+nums[2];
-
-        for(int i=3; i<n; i++){
-            int temp = max(first,second) + nums[i];
-            first = second;
-            second = curr;
-            curr = temp;
-            
-        }
-        
-        return max(curr,second);
+        memset(dp,-1,sizeof(dp));
+        n = nums.size();
+        int ans = max(rec(0,nums), rec(1,nums));
+        return ans;
     }
 };
