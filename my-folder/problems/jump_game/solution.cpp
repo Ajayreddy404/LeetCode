@@ -1,16 +1,31 @@
 class Solution {
 public:
-    bool canJump(vector<int>& nums) {
-        int n = nums.size();
-        int curr = 0;
-        for(int i=0; i<n && i<=curr; i++){
-            curr = max(curr, i+nums[i]);
+    int n;
+//     bool dp[100100];
+    
+//     int rec(int level, vector<int>& arr){
+//         if(level>=n-1)  return dp[level] = true;
+        
+//         if(dp[level])   return true;
+        
+//         bool ans = false;
+//         for(int i=arr[level]; i>0; i--){
+//             if(rec(level+i,arr)){
+//                 ans = true;
+//                 break;
+//             }
+//         }
+        
+//         return dp[level] = ans;
+//     }
+    
+    bool canJump(vector<int>& arr) {
+        n = arr.size();
+        int ans = arr[0];
+        for(int i=1; i<n; i++){
+            if(ans < i) break;
+            ans = max(ans,i+arr[i]);
         }
-        if(curr>=n-1){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return (ans>=n-1)? true : false;
     }
 };
