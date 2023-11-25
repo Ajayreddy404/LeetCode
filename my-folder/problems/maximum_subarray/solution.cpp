@@ -2,17 +2,20 @@ class Solution {
 public:
     int maxSubArray(vector<int>& arr) {
         int n = arr.size();
-        int msum = -1e5, csum = 0, mnum = -1e5;
-        bool flag = false;
-        for(int i=0; i<n; i++){
-            mnum = max(mnum, arr[i]);
-            if(arr[i]>=0)    flag = true;
-            csum += arr[i];
-            if(csum<0)  csum = 0;
-            msum = max(csum,msum);
+
+        int psum[n+1]; psum[0] = 0;
+        for(int i=1; i<=n; i++){
+            psum[i] = psum[i-1] + arr[i-1];
         }
+
+        int mn = 0;
+        int ans = psum[1];
+        for(int i=1; i<=n; i++){
+            if(i!=1)    ans = max(ans, psum[i]-mn);
+            mn = min(mn, psum[i]);
+        }
+
+        return ans;
         
-        if(!flag)   return mnum;
-        return msum;
     }
 };
