@@ -1,27 +1,33 @@
 class Solution {
 public:
-    vector<vector<int>> threeSum(vector<int>& arr) {
-        sort(arr.begin(),arr.end());
-        int n = arr.size();
-        set<vector<int>> ans;
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> ans;
+        sort(nums.begin(),nums.end());
+
+        int n = nums.size();
+
         for(int i=0; i<n; i++){
-            // while(i+1<n && arr[i]==arr[i+1])  i++;
-            for(int j=i+1; j<n-1; j++){
-                // while(j-1>i+1 && arr[j]==arr[j-1])  j--;
-                int num = -(arr[i]+arr[j]);
-                // cout<<arr[i]<<" "<<arr[j]<<endl;
-                auto it = lower_bound(arr.begin()+j+1, arr.end(), num);
-                // cout<<*it<<endl;
-                if(it!=arr.end() && num == *it){
-                    // vector<int> vec = {arr[i],arr[j],*it};
-                    ans.insert({arr[i],arr[j],*it});
+            int j=i+1, k = n-1;
+            while(j<k){
+                int csum = nums[i]+nums[j]+nums[k];
+                if(csum>0){
+                    k--;
+                }else if(csum<0){
+                    j++;
+                }else if(csum==0){
+                    // cout<<i<<" "<<j<<" "<<k<<endl;
+                    ans.push_back({nums[i],nums[j],nums[k]});
+                    int j1 = j, k1 = k;
+                    // removing duplicates as 2nd and 3rd element
+                    while(j<k && nums[j]==nums[j1])  j++;
+                    while(j<k && nums[k]==nums[k1])  k--;
                 }
+                
             }
+
+            // removing duplicated at 1st element
+            while(i+1<n && nums[i]==nums[i+1])  i++;
         }
-        vector<vector<int>> vec;
-        for(auto it: ans){
-            vec.push_back(it);
-        }
-        return vec;
+        return ans;
     }
 };
