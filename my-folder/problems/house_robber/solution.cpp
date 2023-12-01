@@ -5,16 +5,9 @@ public:
     int dp[101];
     
     int rec(int level, vector<int>& arr){
-        if(level>=n){
-            return 0;
-        }
-        
-        if(dp[level]!=-1){
-            return dp[level];
-        }
-        
-        int ans = max(rec(level+2, arr), rec(level+3, arr)) + arr[level];
-        
+        if(level>=n)    return 0;
+        if(dp[level]!=-1)   return dp[level];
+        int ans = max(arr[level]+rec(level+2,arr), rec(level+1,arr));
         return dp[level] = ans;
     }
     
