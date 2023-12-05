@@ -1,36 +1,25 @@
 class Solution {
 public:
-    string s1, s2;
-    int n = s1.length(), m = s2.length();
+    int n,m;
     int dp[1001][1001];
 
-    int rec(int i, int j){
-        if(i==n || j==m){
-            return 0;
-        }
-        if(dp[i][j]!=-1)    return dp[i][j];
-
+    // returns the max len subseq in s1[l1], s2[l2]
+    int rec(int l1, int l2, string& s1, string &s2){
+        if(l1==n || l2==m)  return 0;
+        if(dp[l1][l2]!=-1)  return dp[l1][l2];
         int ans = 0;
-        if(s1[i]==s2[j]){
-            ans = 1+rec(i+1,j+1);
-        }else{
-            ans = max(rec(i+1,j), rec(i,j+1));
+        if(s1[l1]==s2[l2])  ans = 1+rec(l1+1,l2+1,s1,s2);
+        else{
+            ans = max(rec(l1+1,l2,s1,s2), rec(l1,l2+1,s1,s2));
         }
-
-        return dp[i][j] = ans;
+        return dp[l1][l2] = ans;
     }
-    
-    int longestCommonSubsequence(string text1, string text2) {
-        s1 = text1;
-        s2 = text2;
+
+    int longestCommonSubsequence(string s1, string s2) {
         n = s1.length();
         m = s2.length();
-        for(int i=0; i<=n; i++){
-            for(int j=0; j<=m; j++){
-                dp[i][j] = -1;
-            }
-        }
-        int ans = rec(0,0);
+        memset(dp,-1,sizeof(dp));
+        int ans = rec(0,0,s1,s2);
         return ans;
     }
 };
