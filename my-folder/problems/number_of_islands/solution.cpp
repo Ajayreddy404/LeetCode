@@ -1,32 +1,33 @@
 class Solution {
 public:
+    // vector<vector<int>> [301];
+    bool vis[301][301];
     int n,m;
-    void rec(vector<vector<char>>& grid, int i, int j){
-        if(i>=n || j>=m || i<0 || j<0 || grid[i][j]=='2')    return;
-        if(grid[i][j]=='0'){
-            grid[i][j] = '2';
-            return;
-        }
-        grid[i][j] = '2';
-        rec(grid, i+1, j);
-        rec(grid, i, j+1);
-        rec(grid, i-1, j);
-        rec(grid, i, j-1);
+
+    void dfs(int i, int j, vector<vector<char>>& grid){
+        if(vis[i][j]==true || grid[i][j]=='0') return;
+        vis[i][j] = true;
+        if(i+1<n)   dfs(i+1,j,grid);
+        if(j+1<m)   dfs(i,j+1,grid);
+        if(i-1>=0)  dfs(i-1,j,grid);
+        if(j-1>=0)   dfs(i,j-1,grid);
         return;
     }
+
     int numIslands(vector<vector<char>>& grid) {
-        int cnt = 0;
         n = grid.size();
         m = grid[0].size();
-        for(int i=0; i<n; i++){
-            for(int j=0; j<m; j++){
-                if(grid[i][j]=='1'){
-                    rec(grid, i, j);
+        int cnt = 0;
+        for(int i=0; i<grid.size(); i++){
+            for(int j=0; j<grid[i].size(); j++){
+                if(grid[i][j]=='1' && vis[i][j]==false){
+                    dfs(i,j,grid);
                     cnt++;
                 }
             }
         }
+        
         return cnt;
+        
     }
 };
-
