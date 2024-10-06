@@ -3,7 +3,7 @@ name: Sync Leetcode
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 2 * * *"  # This sets the workflow to run every day at 2:00 AM UTC (7:30 AM IST)
+    - cron: "0 1 * * *"  # This sets the workflow to run every day at 1:00 AM UTC (7:30 AM IST)
 
 permissions:
   contents: write  # Ensure the action has permission to commit changes
@@ -20,18 +20,18 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           leetcode-csrf-token: ${{ secrets.LEETCODE_CSRF_TOKEN }}
           leetcode-session: ${{ secrets.LEETCODE_SESSION }}
-          destination-folder: .
+          destination-folder: leetcode-solutions  # Replace with your folder name
           filter-duplicate-secs: "true"  # Set to true to avoid processing duplicates
-          
+
       # Filter and Create Question Metadata
       - name: Filter and Create Question Metadata
         run: |
           cd leetcode-solutions  # Change to your destination folder
           for file in *; do
-            # Include only .cpp and .sql files
-            if [[ "$file" == *.cpp ]] || [[ "$file" == *.sql ]]; then
+            # Only process .cpp files
+            if [[ "$file" == *.cpp ]]; then
               # Extract the question title from the file name (assuming the filename is the title)
-              question_title="$(basename "$file" .cpp)"  # Adjust this line for .sql files as well
+              question_title="$(basename "$file" .cpp)"  # Extract title from .cpp filename
               question_slug="${question_title// /-}"  # Convert spaces to hyphens for the slug
               question_url="https://leetcode.com/problems/$question_slug/"  # Construct the question URL
               
@@ -43,16 +43,11 @@ jobs:
               echo "## Answer" >> "${question_title}/README.md"
               
               # Append the answer code to README
-              if [[ "$file" == *.cpp ]]; then
-                echo "```cpp" >> "${question_title}/README.md"
-              elif [[ "$file" == *.sql ]]; then
-                echo "```sql" >> "${question_title}/README.md"
-              fi
-
+              echo "```cpp" >> "${question_title}/README.md"
               cat "$file" >> "${question_title}/README.md"  # Append the answer code to README
               echo "```" >> "${question_title}/README.md"
               echo "Created README.md for $question_title with URL."
             else
-              echo "Skipping $file as it is not a .cpp or .sql file."
+              echo "Skipping $file as it is not a .cpp file."
             fi
           done
