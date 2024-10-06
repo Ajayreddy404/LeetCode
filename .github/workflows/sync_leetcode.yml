@@ -14,30 +14,37 @@ jobs:
 
     steps:
       - name: Sync LeetCode Solutions
+        id: sync
         uses: joshcai/leetcode-sync@v1.5
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           leetcode-csrf-token: ${{ secrets.LEETCODE_CSRF_TOKEN }}
           leetcode-session: ${{ secrets.LEETCODE_SESSION }}
-          destination-folder: .
+          destination-folder: leetcode-solutions  # Replace with your folder name
 
-      # Create README.md files with question metadata
-      - name: Create Question Metadata
+      # Filter and Create Question Metadata
+      - name: Filter and Create Question Metadata
         run: |
           cd leetcode-solutions  # Change to your destination folder
-          for file in *.cpp; do
-            # Extract the question title from the file name (assuming the filename is the title)
-            question_title="$(basename "$file" .cpp)"
-            question_slug="${question_title// /-}"  # Convert spaces to hyphens for the slug
-            question_url="https://leetcode.com/problems/$question_slug/"  # Construct the question URL
-            
-            # Create or append to the README.md file
-            echo "# $question_title" > "${question_title}/README.md"
-            echo "## Question URL" >> "${question_title}/README.md"
-            echo "[Link to LeetCode Question]($question_url)" >> "${question_title}/README.md"
-            echo "## Answer" >> "${question_title}/README.md"
-            echo "```cpp" >> "${question_title}/README.md"
-            cat "$file" >> "${question_title}/README.md"  # Append the answer code to README
-            echo "```" >> "${question_title}/README.md"
-            echo "Created README.md for $question_title with URL."
+          for file in *; do
+            # Include only .cpp and .sql files
+            if [[ "$file" == *.cpp ]] || [[ "$file" == *.sql ]]; then
+              # Extract the question title from the file name (assuming the filename is the title)
+              question_title="$(basename "$file" .cpp)"  # Adjust this line if using .sql as well
+              question_slug="${question_title// /-}"  # Convert spaces to hyphens for the slug
+              question_url="https://leetcode.com/problems/$question_slug/"  # Construct the question URL
+              
+              # Create or append to the README.md file
+              mkdir -p "$question_title"  # Create a directory for the question if it doesn't exist
+              echo "# $question_title" > "${question_title}/README.md"
+              echo "## Question URL" >> "${question_title}/README.md"
+              echo "[Link to LeetCode Question]($question_url)" >> "${question_title}/README.md"
+              echo "## Answer" >> "${question_title}/README.md"
+              echo "```cpp" >> "${question_title}/README.md"  # Adjust based on your file extensions
+              cat "$file" >> "${question_title}/README.md"  # Append the answer code to README
+              echo "```" >> "${question_title}/README.md"
+              echo "Created README.md for $question_title with URL."
+            else
+              echo "Skipping $file as it is not a .cpp or .sql file."
+            fi
           done
