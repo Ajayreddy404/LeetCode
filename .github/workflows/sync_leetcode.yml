@@ -20,7 +20,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           leetcode-csrf-token: ${{ secrets.LEETCODE_CSRF_TOKEN }}
           leetcode-session: ${{ secrets.LEETCODE_SESSION }}
-          destination-folder: leetcode-solutions  # Replace with your folder name
+          destination-folder: .
           filter-duplicate-secs: "true"  # Set to true to avoid processing duplicates
 
       # Filter and Create Question Metadata
