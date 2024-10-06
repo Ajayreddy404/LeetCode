@@ -3,25 +3,41 @@ name: Sync Leetcode
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 8 * * 6"
+    - cron: "0 2 * * *"  # This sets the workflow to run every day at 2:00 AM UTC (7:30 AM IST)
 
 permissions:
-  contents: write
+  contents: write  # Ensure the action has permission to commit changes
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Sync
+      - name: Sync LeetCode Solutions
         uses: joshcai/leetcode-sync@v1.5
         with:
-          github-token: ${{ github.token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           leetcode-csrf-token: ${{ secrets.LEETCODE_CSRF_TOKEN }}
           leetcode-session: ${{ secrets.LEETCODE_SESSION }}
-          destination-folder: my-folder
+          destination-folder: leetcode-solutions  # Replace with your folder name
 
-          # Debug Output Step
-      - name: Debug Output
+      # Create README.md files with question metadata
+      - name: Create Question Metadata
         run: |
-          echo "Generated file path: ${{ github.workspace }}/your-desired-folder"  # Update with your actual folder name
+          cd leetcode-solutions  # Change to your destination folder
+          for file in *.cpp; do
+            # Extract the question title from the file name (assuming the filename is the title)
+            question_title="$(basename "$file" .cpp)"
+            question_slug="${question_title// /-}"  # Convert spaces to hyphens for the slug
+            question_url="https://leetcode.com/problems/$question_slug/"  # Construct the question URL
+            
+            # Create or append to the README.md file
+            echo "# $question_title" > "${question_title}/README.md"
+            echo "## Question URL" >> "${question_title}/README.md"
+            echo "[Link to LeetCode Question]($question_url)" >> "${question_title}/README.md"
+            echo "## Answer" >> "${question_title}/README.md"
+            echo "```cpp" >> "${question_title}/README.md"
+            cat "$file" >> "${question_title}/README.md"  # Append the answer code to README
+            echo "```" >> "${question_title}/README.md"
+            echo "Created README.md for $question_title with URL."
+          done
