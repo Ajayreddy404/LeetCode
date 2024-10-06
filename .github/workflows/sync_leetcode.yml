@@ -20,8 +20,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           leetcode-csrf-token: ${{ secrets.LEETCODE_CSRF_TOKEN }}
           leetcode-session: ${{ secrets.LEETCODE_SESSION }}
-          destination-folder: leetcode-solutions  # Replace with your folder name
-
+          destination-folder: .
+          filter-duplicate-secs: "true"  # Set to true to avoid processing duplicates
+          
       # Filter and Create Question Metadata
       - name: Filter and Create Question Metadata
         run: |
@@ -30,7 +31,7 @@ jobs:
             # Include only .cpp and .sql files
             if [[ "$file" == *.cpp ]] || [[ "$file" == *.sql ]]; then
               # Extract the question title from the file name (assuming the filename is the title)
-              question_title="$(basename "$file" .cpp)"  # Assuming .cpp files are processed
+              question_title="$(basename "$file" .cpp)"  # Adjust this line for .sql files as well
               question_slug="${question_title// /-}"  # Convert spaces to hyphens for the slug
               question_url="https://leetcode.com/problems/$question_slug/"  # Construct the question URL
               
