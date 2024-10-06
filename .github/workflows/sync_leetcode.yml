@@ -30,7 +30,7 @@ jobs:
             # Include only .cpp and .sql files
             if [[ "$file" == *.cpp ]] || [[ "$file" == *.sql ]]; then
               # Extract the question title from the file name (assuming the filename is the title)
-              question_title="$(basename "$file" .cpp)"  # Adjust this line if using .sql as well
+              question_title="$(basename "$file" .cpp)"  # Assuming .cpp files are processed
               question_slug="${question_title// /-}"  # Convert spaces to hyphens for the slug
               question_url="https://leetcode.com/problems/$question_slug/"  # Construct the question URL
               
@@ -40,7 +40,14 @@ jobs:
               echo "## Question URL" >> "${question_title}/README.md"
               echo "[Link to LeetCode Question]($question_url)" >> "${question_title}/README.md"
               echo "## Answer" >> "${question_title}/README.md"
-              echo "```cpp" >> "${question_title}/README.md"  # Adjust based on your file extensions
+              
+              # Append the answer code to README
+              if [[ "$file" == *.cpp ]]; then
+                echo "```cpp" >> "${question_title}/README.md"
+              elif [[ "$file" == *.sql ]]; then
+                echo "```sql" >> "${question_title}/README.md"
+              fi
+
               cat "$file" >> "${question_title}/README.md"  # Append the answer code to README
               echo "```" >> "${question_title}/README.md"
               echo "Created README.md for $question_title with URL."
